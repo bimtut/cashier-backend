@@ -53,50 +53,35 @@ module.exports = {
     },
     getTransaction: async (req, res) => {
         let data = []
-        model.getTransaction()
-            .then((result) => {
+        await model.getTransaction()
+            .then(async (result) => {
                 data = result
-                // helper.response(res, result, 200)
-                // console.log(data)
-                data.map((item) => {
-                    // console.log('trans id ke ', item.id)
-                    model.getTransactionsItems(item.id)
-                    .then((result) => {
-                        console.log(result)
-                        // data = result
-                        helper.response(res, result, 200)
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                    })
-                })
-                
             })
+
             .catch((error) => {
-                console.log(error)
+                console.log('yahhh ', error)
             })
 
-        // data.map((product, index) => {
-        //     console.log(product.transactionId)
+        await data.map((transaction, index) => {
+            console.log('ini trans ke ', transaction.id)
+            model.getTransactionsItems(transaction.id)
+                .then(result => {
 
-        //     model.getTransactionsItems(product.transactionId)
-        //         .then(result => {
-        //             // console.log(result)
-        //             // data[index] = {
-        //             //     ...product,
-        //             //     transaction_items: result
-        //             // }
-        //             // if (index == data.length - 1) {
-        //             //     helper.response(res, result, 200)
+                    data[index] = {
+                        ...transaction,
+                        transactionitems: result
+                    }
+                    console.log(data[index])
+                    if (index == data.length - 1) {
+                        helper.response(res, data, 200)
 
-        //             //     // formResponse.success(res, 200, data)
-        //             // }
-        //         })
-        //         .catch(err => {
-        //             res.json(err);
-        //         });
-        // })
-
+                    }
+                })
+                .catch(err => {
+                    res.json(err);
+                });
+        })
+        
     },
     getTransItem: (req, res) => {
         const transactionId = req.body.transactionId
