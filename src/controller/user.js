@@ -31,12 +31,14 @@ module.exports = {
 
         model.getByEmail(email)
             .then((result) => {
+                console.log('emailnya ada')
                 const dataUser = result[0]
                 const userPassword = helper.setPassword(password, dataUser.salt).passwordHash
 
                 if (userPassword === dataUser.password) {
+                    console.log('password benar domng')
                     dataUser.token = jwt.sign({
-                        userid: dataUser.userid
+                        id: dataUser.id
                     }, process.env.SECRET_KEY || "BIMA", { expiresIn: '8h' })
 
                     delete dataUser.salt
@@ -50,6 +52,8 @@ module.exports = {
                         })
                     return helper.response(res, dataUser, 200)
                 } else {
+                    console.log('password salah');
+                    
                     return helper.response(res, null, 403, 'Wrong Password')
                 }
 
@@ -60,9 +64,10 @@ module.exports = {
     },
     logout: (req, res) => {
         const userid = req.params.userid
-
+        console.log('id dari bacnkend log out ', userid)
         model.logout(userid)
         .then((resultUser) => {
+            console.log('berhasil log out dari id '. userid)
             const result = resultUser[0]
             helper.response(res, result, 200)
         })

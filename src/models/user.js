@@ -17,7 +17,7 @@ module.exports = {
     // login
     getByEmail: (email) => { //get data dari email yg cocok dulu.. lalu...
         return new Promise((resolve, reject) => {
-            conn.query(`SELECT userid, email, fullname, created_at, salt, password FROM user WHERE email = ?`, email, (err, result) => {
+            conn.query(`SELECT id, email, fullname, created_at, salt, password FROM user WHERE email = ?`, email, (err, result) => {
                 if (!err) {
                     resolve(result)
                 } else {
@@ -40,8 +40,9 @@ module.exports = {
     // -----------end of login -------------
     logout: (userid) => { //menghapus token dengan menimpanya dengan text 'test'
         const test = 'test'; //buat apanih kalo leh taw
+        console.log('ini id dari model ', userid)
         return new Promise((resolve, reject) => {
-            conn.query(`UPDATE user SET token = ? WHERE userid = ?`, [test, userid], (err, result) => {
+            conn.query(`UPDATE user SET token = ? WHERE id = ?`, [test, userid], (err, result) => {
                 if (!err) {
                     resolve(result)
                 } else {
