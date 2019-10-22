@@ -3,12 +3,14 @@ const helper = require('../helpers/helper')
 
 module.exports = {
     newTransaction: (req, res) => {
-        const userId = req.body.userId
-        const transactions_items = req.body.transactions_items
-        // const transactionId = req.body.transactionId
-        // const products = req.body.products
+        const userId = req.body.userId,
+            series = req.body.series,
+            ppn = req.body.ppn,
+            total = req.body.total
 
-        model.newTransaction(userId)
+        const transactions_items = req.body.transactions_items
+        
+        model.newTransaction(userId, series, ppn, total)
             .then((result) => {
                 helper.response(res, result, 200)
 

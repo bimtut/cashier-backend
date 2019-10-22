@@ -1,16 +1,16 @@
 const conn = require('../config/db')
 module.exports = {
-    newTransaction: (userId) => {
+    newTransaction: (userId, series, ppn, total) => {
         return new Promise((resolve, reject) => {
-            conn.query('INSERT INTO transactions (userId) VALUES (?)', [userId], (err, result) => {
-                if(!err) {
+            conn.query('INSERT INTO transactions (userId, series, ppn, total) VALUES (?,?,?,?)', [userId, series, ppn, total], (err, result) => {
+                if (!err) {
                     resolve(result)
                 } else {
                     reject(new Error(err))
                 }
             })
         })
-        
+
     },
     getLastId: () => {
         return new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ module.exports = {
     },
     getTransaction: () => {
         return new Promise((resolve, reject) => {
-            conn.query('SELECT transactions.*, user.fullname as cashier FROM transactions JOIN user ON transactions.userId = user.id', [], (err, result) => {
+            conn.query('SELECT transactions.*, user.fullname as cashier FROM transactions JOIN user ON transactions.userId = user.id ORDER BY created_at DESC', [], (err, result) => {
                 if (!err) {
                     resolve(result)
                 } else {
@@ -54,8 +54,8 @@ module.exports = {
         })
     },
     getTransactionsItems: (transId) => {
-        return new Promise ((resolve, reject) => {
-            conn.query('SELECT * FROM transactions_items WHERE transactionsId = ?', [transId], (err, result) => {
+        return new Promise((resolve, reject) => {
+            conn.query('SELECT transactions_items.quantity, transactions_items.subtotal, product.id, product.name, product.price, product.image FROM transactions_items JOIN product ON transactions_items.itemId = product.id WHERE transactionsId = ?', [transId], (err, result) => {
                 if (!err) {
                     resolve(result)
                 } else {
